@@ -1,0 +1,9 @@
+librosa==0.10.0.post2
+numpy==1.21.6
+scikit-learn==1.0.2
+scipy==1.7.3
+soundfile==0.12.1
+torch==1.13.1
+torchaudio==0.13.1
+
+

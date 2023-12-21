@@ -1,0 +1,23 @@
+Создание библиотеки
+
+python setup.py sdist - создает только архив
+
+python setup.py sdist bdist_wheel - чтобы создать и архив и wheel
+.tar.gz - исходный архив
+.whl - это файл Wheel - встроенный дистрибутив
+
+На компьютере пользователя pip будет по мере возможности устанавливать библиотеки как wheels/колеса.
+Они устанавливаются быстрее. Когда pip не может этого сделать, он возвращается к исходному архиву.
+
+Загрузка на PyPi test Millcool_test Ub...96
+
+twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
+
+Установка библиотеки pip install -i https://test.pypi.org/simple/ Pyara==0.1.5
+
+Загрузка на PyPi
+
+twine upload dist/*
+
+MANIFEST.in нужен чтобы добавлять в питоновскую библиотеку не только .py файлы, но и .bin и многие другие
