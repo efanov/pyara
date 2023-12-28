@@ -1,4 +1,4 @@
-Code for synthesized speech recognition system
+# Code for synthesized speech recognition system
 
 Русскоязычный датасет для обучения нейронной сети на Kaggle:
 https://www.kaggle.com/datasets/alep079/pyara
