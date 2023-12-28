@@ -10,9 +10,9 @@ from pyara.config import CFG
 from pyara.audio_prepare import cut_if_necessary, right_pad_if_necessary, prepare_signal, prediction
 from pyara.audio_prepare import MFCC_spectrogram, prediction_multiple, prepare_signals
 
-''' Для правильного запуска тестов необходимо установить библиотеку pyara: 
-    pip install pyara 
-и перейти в текущую директорию для правильных путей к аудиозаписям'''
+''' Для правильного запуска тестов необходимо сначала установить библиотеку pyara: 
+        pip install pyara 
+    и перейти в текущую директорию для правильных путей к аудиозаписям'''
 
 # Model test (ResNet)
 class TestResNetBlock(unittest.TestCase):
