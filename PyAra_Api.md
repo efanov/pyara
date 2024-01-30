@@ -107,7 +107,8 @@ predict_audio('C:/Tests/mp3.mp3')
 - Возвращает обрезанный аудиосигнал.
 
 ### Пример использования
-```
+
+```python
 import torchaudio
 import torch
 MFCC_spectrogram = torchaudio.transforms.MFCC(
@@ -143,7 +144,8 @@ signal = cut_if_necessary(signal, 300)
 - `torch.Tensor`: Дополненный сигнал с выполненным дополнением последнего измерения вправо.
 
 ### Пример использования:
-```
+
+```python
 import torchaudio
 import torch
 MFCC_spectrogram = torchaudio.transforms.MFCC(
@@ -194,7 +196,7 @@ signal.shape
 10. Возврат подготовленного сигнала.
 
 ### Пример использования:
-```
+```python
 from pyara import prepare_signal 
 prepare_signal('C:/Tests/mp3.mp3')
 ```
@@ -225,7 +227,8 @@ prepare_signal('C:/Tests/mp3.mp3')
 9. Сборка всех подготовленных сигналов в `res`.
 
 ### Пример использования
-```
+
+```python
 from pyara import prepare_signals 
 prepare_signals(['C:/Tests/mp3.mp3', 'C:/Tests/mp23.mp3'])
 ```
@@ -252,11 +255,12 @@ prepare_signals(['C:/Tests/mp3.mp3', 'C:/Tests/mp23.mp3'])
 
 ### Пример использования:
 
+```python
 from pyara import prediction
 model = model_eval()
 signal = prepare_signal(file_path, pitch_shift, width, sample_rate)
 prediction(model, signal)
-
+```
 ## 2.7 Функция `prediction_multiple`
 
 Функция `prediction_multiple` используется для получения предсказаний от модели по нескольким входным сигналам.
