@@ -1,5 +1,6 @@
 # PyAra Library Documentation
 
+```
 pyara/
 ├── Model/
 │   ├── Model_weights.bin
@@ -9,21 +10,24 @@ pyara/
 ├── main.py
 ├── model.py
 ├── tests/
-│   ├── test_audio/
-│   │   ├── 1.aiff
-│   │   ├── 1.flac
-│   │   ├── 1.mp3
-│   │   ├── 1.ogg
-│   │   ├── 1.wav
-│   │   ├── 2.wav
-│   │   ├── Alg_1_0.wav
-│   │   └── real_0.wav
+│   └── test_audio/
+│       ├── 1.aiff
+│       ├── 1.flac
+│       ├── 1.mp3
+│       ├── 1.ogg
+│       ├── 1.wav
+│       ├── 2.wav
+│       ├── Alg_1_0.wav
+│       └── real_0.wav
 │   └── tests.py
 ├── Developer_Guide.odt
 ├── Developer_Guide.pdf
 ├── setup.cfg
 ├── setup.py
 └── LICENSE
+```
+
+
 
 ## Namespaces
 
@@ -81,6 +85,7 @@ pyara/
 **Example:**
 
 from pyara import predict_audio
+
 predict_audio('C:/Tests/mp3.mp3')
 
 
@@ -102,7 +107,7 @@ predict_audio('C:/Tests/mp3.mp3')
 - Возвращает обрезанный аудиосигнал.
 
 ### Пример использования
-
+```
 import torchaudio
 import torch
 MFCC_spectrogram = torchaudio.transforms.MFCC(
@@ -124,6 +129,7 @@ signal = signal.unsqueeze(dim=0)
 signal, sample_rate = torchaudio.load('test_audio')
 signal = MFCC_spectrogram(signal)
 signal = cut_if_necessary(signal, 300)
+```
 
 ## Функция `right_pad_if_necessary`
 
@@ -137,7 +143,7 @@ signal = cut_if_necessary(signal, 300)
 - `torch.Tensor`: Дополненный сигнал с выполненным дополнением последнего измерения вправо.
 
 ### Пример использования:
-
+```
 import torchaudio
 import torch
 MFCC_spectrogram = torchaudio.transforms.MFCC(
@@ -160,7 +166,7 @@ signal = signal.unsqueeze(dim=0)
 signal = MFCC_spectrogram(signal)
 signal = right_pad_if_necessary(signal, 300)
 signal.shape
-
+```
 
 ## 2.4 Функция `prepare_signal`
 
@@ -188,10 +194,10 @@ signal.shape
 10. Возврат подготовленного сигнала.
 
 ### Пример использования:
-
+```
 from pyara import prepare_signal 
 prepare_signal('C:/Tests/mp3.mp3')
-
+```
 
 ## 2.5 Функция `prepare_signals`
 
@@ -219,10 +225,10 @@ prepare_signal('C:/Tests/mp3.mp3')
 9. Сборка всех подготовленных сигналов в `res`.
 
 ### Пример использования
-
+```
 from pyara import prepare_signals 
 prepare_signals(['C:/Tests/mp3.mp3', 'C:/Tests/mp23.mp3'])
-
+```
 
 ## 2.6 Функция `prediction`
 
@@ -270,10 +276,12 @@ prediction(model, signal)
 
 ### Пример использования:
 
+```python
 from pyara import prediction_multiple
 model = model_eval()
 signals = prepare_signals([file_path1, file_path2], pitch_shift, width, sample_rate)
 prediction_multiple(model, signals)
+```
 
 ## Функция: `model_eval`
 
