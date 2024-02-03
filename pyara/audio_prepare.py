@@ -104,13 +104,13 @@ def prepare_signals(voice_paths
                    , width=CFG.width
                    , sample_rate=CFG.SAMPLE_RATE):
     """
-      Подготавливает аудиосигнал для обработки.
+      Подготавливает несколько аудиосигналов для обработки.
 
       Аргументы:
-      - voice_path (str): Путь к аудиофайлу.
+      - voice_paths (str): Пути к аудиофайлам.
 
       Возвращает:
-      - signal (torch.Tensor): Подготовленный сигнал для обработки.
+      - signal (torch.Tensor): Список из подготовленных сигналов для обработки.
 
       Шаги подготовки сигнала:
       1. Загрузка аудиофайла с помощью функции `torchaudio.load(voice_path)`.
@@ -136,23 +136,8 @@ def prepare_signals(voice_paths
       """
     res = []
     for voice_path in voice_paths:
-        signal, sample_rate = torchaudio.load(voice_path)
-        signal = signal.mean(dim=0)
-        signal = signal.unsqueeze(dim=0)
-        if pitch_shift != 0:
-            signal = librosa.effects.pitch_shift(signal.numpy(), sr=sample_rate, n_steps=pitch_shift)
-            signal = torch.from_numpy(signal)
-        signal = MFCC_spectrogram(signal)
-
         # TODO сделать зависимость от args, kwargs
-        signal = cut_if_necessary(signal, width)
-        signal = right_pad_if_necessary(signal, width)
-
-        signal = signal.repeat(3, 1, 1)
-        signal = signal.unsqueeze(dim=0)
-        signal = signal.to(CFG.device)
-        print(f'Audio signal prepared!')
-        res.append(signal)
+        res.append(prepare_signal(voice_path=voice_path, pitch_shift=pitch_shift, width=width, sample_rate=sample_rate))
     return res
 
 
