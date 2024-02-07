@@ -68,7 +68,7 @@ def prepare_signal(voice_path
       3. Добавление размерности пакета (batch) к сигналу `signal`,
       используя функцию `signal.unsqueeze(dim=0)`.
       4. Применение преобразования MFCC (Mel-frequency cepstral coefficients)
-      к сигналу `signal` с помощью функции `MFCC_spectrogram(signal)`.
+      к сигналу `signal` с помощью функции `LFCC_spectrogram(signal)`.
          В результате получается спектрограмма MFCC.
       5. Обрезка спектрограммы `signal`, если необходимо,
       с помощью функции `cut_if_necessary(signal)`.
@@ -88,7 +88,7 @@ def prepare_signal(voice_path
     if pitch_shift != 0:
         signal = librosa.effects.pitch_shift(signal.numpy(), sr=sample_rate, n_steps=pitch_shift)
         signal = torch.from_numpy(signal)
-    signal = MFCC_spectrogram(signal)
+    signal = LFCC_spectrogram(signal)
 
     signal = cut_if_necessary(signal, width)
     signal = right_pad_if_necessary(signal, width)
@@ -120,7 +120,7 @@ def prepare_signals(voice_paths
       3. Добавление размерности пакета (batch) к сигналу `signal`,
       используя функцию `signal.unsqueeze(dim=0)`.
       4. Применение преобразования MFCC (Mel-frequency cepstral coefficients)
-      к сигналу `signal` с помощью функции `MFCC_spectrogram(signal)`.
+      к сигналу `signal` с помощью функции `LFCC_spectrogram(signal)`.
          В результате получается спектрограмма MFCC.
       5. Обрезка спектрограммы `signal`, если необходимо,
       с помощью функции `cut_if_necessary(signal)`.
@@ -203,6 +203,18 @@ MFCC_spectrogram = torchaudio.transforms.MFCC(
         'window_fn': torch.hann_window,
         'center': False
     },
+)
+
+LFCC_spectrogram = torchaudio.transforms.LFCC(
+    sample_rate = 16000,
+    n_filter = 128,
+    f_min = 0.0,
+    f_max = None,
+    n_lfcc = 80,
+    dct_type = 2,
+    norm= 'ortho',
+    log_lf = False,
+    speckwargs = None,
 )
 
 
