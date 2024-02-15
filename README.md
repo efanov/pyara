@@ -1,4 +1,4 @@
-# Code for synthesized speech recognition system
+# PyAra - synthesized speech recognition system
 
 Русскоязычный [датасет](https://www.kaggle.com/datasets/alep079/pyara) для обучения нейронной сети на Kaggle: https://www.kaggle.com/datasets/alep079/pyara
 
