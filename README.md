@@ -5,8 +5,8 @@
 Для дальнейшего развития датасета разработан [телеграмм-бот](https://t.me/PyAraSpeech_bot), который позволяет волонтёрам собирать дополнительные аудиозаписи: https://t.me/PyAraSpeech_bot
 
 Документация и инструкции по работе с библиотекой с примерами использования различных функций:
-https://github.com/efanov/pyara/blob/main/PyAra_Api.md
-https://github.com/efanov/pyara/wiki
+* https://github.com/efanov/pyara/blob/main/PyAra_Api.md
+* https://github.com/efanov/pyara/wiki
 
 ---
 
