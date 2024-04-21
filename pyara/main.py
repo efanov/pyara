@@ -5,7 +5,6 @@ from model import model_eval
 from audio_prepare import prediction, prepare_signal
 from config import CFG
 
-
 def predict_audio(file_path
                   ,print_probability = False
                   ,pitch_shift = 0
@@ -33,6 +32,5 @@ def predict_audio(file_path
     #Если print_probability = False
     return prediction_of_model
 
-
 if __name__ == '__main__':
-    print(predict_audio("tests/test_audio/real_0.wav", print_probability=True, pitch_shift=10))
+    print(predict_audio("tests/test_audio/real_0.wav", print_probability=True, pitch_shift=10)) # пример определения реального голоса с выводом вероятности
