@@ -1,4 +1,4 @@
-"""Модуль в котором описаны функции для предобработки аудио"""
+"""Модуль, в котором описаны функции для предобработки аудио"""
 
 import librosa
 import torch
@@ -7,7 +7,7 @@ import torchaudio
 from config import CFG
 
 
-# TODO __all__ во всех файлах чтобы в import опадали только написанные функции
+# TODO __all__ во всех файлах чтобы в import попадали только написанные функции
 
 def cut_if_necessary(signal, width=CFG.width):
     """
