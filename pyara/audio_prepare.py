@@ -3,6 +3,8 @@
 import librosa
 import torch
 import torchaudio
+from spafe.features import bfcc, cqcc
+import numpy as np
 
 from config import CFG
 
@@ -47,15 +49,17 @@ def right_pad_if_necessary(signal, width=CFG.width):
     return signal
 
 
-def prepare_signal(voice_path
-                   , pitch_shift=0
-                   , width=CFG.width
-                   , sample_rate=CFG.SAMPLE_RATE):
+def prepare_signal(voice_path, 
+                   pitch_shift=0,
+                   width=CFG.width,
+                   sample_rate=CFG.SAMPLE_RATE,
+                   spec_type = None):
     """
       Подготавливает аудиосигнал для обработки.
 
       Аргументы:
       - voice_path (str): Путь к аудиофайлу.
+      - spec_type (function): Функция извлечения признаков (MFCC_spec / LFCC_spec / CQCC_spec / BFCC_spec)
 
       Возвращает:
       - signal (torch.Tensor): Подготовленный сигнал для обработки.
@@ -68,7 +72,7 @@ def prepare_signal(voice_path
       3. Добавление размерности пакета (batch) к сигналу `signal`,
       используя функцию `signal.unsqueeze(dim=0)`.
       4. Применение преобразования MFCC (Mel-frequency cepstral coefficients)
-      к сигналу `signal` с помощью функции `LFCC_spectrogram(signal)`.
+      к сигналу `signal` с помощью функции `MFCC_spec(signal)`.
          В результате получается спектрограмма MFCC.
       5. Обрезка спектрограммы `signal`, если необходимо,
       с помощью функции `cut_if_necessary(signal)`.
@@ -88,7 +92,11 @@ def prepare_signal(voice_path
     if pitch_shift != 0:
         signal = librosa.effects.pitch_shift(signal.numpy(), sr=sample_rate, n_steps=pitch_shift)
         signal = torch.from_numpy(signal)
-    signal = LFCC_spectrogram(signal)
+
+    if spec_type == None:
+        signal = MFCC_spec(signal)
+    else:
+        signal = spec_type(signal)
 
     signal = cut_if_necessary(signal, width)
     signal = right_pad_if_necessary(signal, width)
@@ -99,10 +107,11 @@ def prepare_signal(voice_path
     print(f'Audio signal prepared!')
     return signal
 
-def prepare_signals(voice_paths
-                   , pitch_shift=0
-                   , width=CFG.width
-                   , sample_rate=CFG.SAMPLE_RATE):
+def prepare_signals(voice_paths,
+                    pitch_shift=0,
+                    width=CFG.width,
+                    sample_rate=CFG.SAMPLE_RATE,
+                    spec_type = None):
     """
       Подготавливает несколько аудиосигналов для обработки.
 
@@ -111,6 +120,7 @@ def prepare_signals(voice_paths
 
       Возвращает:
       - signal (torch.Tensor): Список из подготовленных сигналов для обработки.
+      - spec_type (function): Функция извлечения признаков (MFCC_spec / LFCC_spec / CQCC_spec / BFCC_spec)
 
       Шаги подготовки сигнала:
       1. Загрузка аудиофайла с помощью функции `torchaudio.load(voice_path)`.
@@ -120,7 +130,7 @@ def prepare_signals(voice_paths
       3. Добавление размерности пакета (batch) к сигналу `signal`,
       используя функцию `signal.unsqueeze(dim=0)`.
       4. Применение преобразования MFCC (Mel-frequency cepstral coefficients)
-      к сигналу `signal` с помощью функции `LFCC_spectrogram(signal)`.
+      к сигналу `signal` с помощью функции `MFCC_spec(signal)`.
          В результате получается спектрограмма MFCC.
       5. Обрезка спектрограммы `signal`, если необходимо,
       с помощью функции `cut_if_necessary(signal)`.
@@ -137,12 +147,10 @@ def prepare_signals(voice_paths
     res = []
     for voice_path in voice_paths:
         # TODO сделать зависимость от args, kwargs
-        res.append(prepare_signal(voice_path=voice_path, pitch_shift=pitch_shift, width=width, sample_rate=sample_rate))
+        res.append(prepare_signal(voice_path=voice_path, pitch_shift=pitch_shift, width=width, sample_rate=sample_rate, spec_type=spec_type))
     return res
 
-
-
-def prediction(model, signal, print_probability=False):
+def prediction(model, signal):
     """
     Функция prediction выполняет предсказание с использованием заданной модели для входного сигнала.
 
@@ -154,8 +162,7 @@ def prediction(model, signal, print_probability=False):
 
     Возвращает:
     - Предсказанную метку класса для входного сигнала.
-    Возвращается значение 1, если модель предсказывает синтезированный голос, и 0,
-     если модель предсказывает реальный голос.
+    Возвращается значение 1, если модель предсказывает синтезированный голос, и 0, если модель предсказывает реальный голос.
 
     Пример использования:
     ```python
@@ -191,7 +198,7 @@ def prediction(model, signal, print_probability=False):
 
 
 # Audio to MFCC spectrogram
-MFCC_spectrogram = torchaudio.transforms.MFCC(
+MFCC_spec = torchaudio.transforms.MFCC(
     sample_rate=CFG.SAMPLE_RATE,
     n_mfcc=CFG.mels,
     melkwargs={
@@ -205,18 +212,30 @@ MFCC_spectrogram = torchaudio.transforms.MFCC(
     },
 )
 
-LFCC_spectrogram = torchaudio.transforms.LFCC(
-    sample_rate = 16000,
+LFCC_spec = torchaudio.transforms.LFCC(
+    sample_rate = CFG.SAMPLE_RATE,
     n_filter = 128,
     f_min = 0.0,
     f_max = None,
-    n_lfcc = 80,
+    n_lfcc = CFG.mels,
     dct_type = 2,
     norm= 'ortho',
     log_lf = False,
     speckwargs = None,
 )
 
+def CQCC_spec(signal):
+    cqccs = cqcc.cqcc(signal[0].numpy(),
+                      fs = CFG.SAMPLE_RATE,
+                      num_ceps = CFG.mels)
+    return(torch.from_numpy(np.array([cqccs])))
+    
+def BFCC_spec(signal):
+    bfccs = bfcc.bfcc(signal[0].numpy(),
+                      fs = CFG.SAMPLE_RATE,
+                      num_ceps=CFG.mels,
+                      nfilts = CFG.mels*2)
+    return(torch.from_numpy(np.array([bfccs])))
 
 def prediction_multiple(model, signals):
     """
