@@ -237,6 +237,19 @@ def BFCC_spec(signal):
                       nfilts = CFG.mels*2)
     return(torch.from_numpy(np.array([bfccs])))
 
+def resampling(filename, target_sr = SR):
+    'Изменение частоты дискретизации'
+    audio, sr = librosa.load(filename, sr=target_sr)
+    return(audio, sr)
+
+def audio_filter(data, low_freq, sr, order=4):
+    'Фильтрация от шумов'
+    nyquist = 0.5 * sr
+    normal_cutoff = low_freq / nyquist
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    filtered_data = filtfilt(b, a, data)
+    return filtered_data
+
 def prediction_multiple(model, signals):
     """
     Функция prediction выполняет предсказание с использованием заданной модели для входного сигнала.
